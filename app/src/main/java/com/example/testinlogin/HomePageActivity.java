@@ -35,7 +35,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
     private static final int CAMERA_PERM_CODE = 100;
     public static final int CAMERA_REQUEST_CODE = 102;
-    private Button button_auxiliar, open_camera_button;
+    private Button button_auxiliar, open_camera_button, know_more_button;
     private String currentPhotoPath;
     private Uri contentUri;
 
@@ -51,6 +51,9 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
         open_camera_button = findViewById(R.id.button_camera);
         open_camera_button.setOnClickListener(this);
+
+        know_more_button = findViewById(R.id.button_know_more);
+        know_more_button.setOnClickListener(this);
     }
 
     @Override
@@ -62,6 +65,10 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
             if(v.getId() == R.id.button_camera){
                 askPermissions();
             }
+        }
+        if(v.getId() == R.id.button_know_more){
+            startActivity(new Intent(HomePageActivity.this, KnowMore.class));
+
         }
     }
 
