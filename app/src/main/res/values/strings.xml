@@ -6,6 +6,9 @@
     <string name="new_user_register_here">Novo utilizador? Registe-se aqui!</string>
     <string name="saber_mais">Saber Mais!</string>
     <string name="sobre">Sobre</string>
+    <string name="estatisticas">Estatísticas</string>
+    <string name="definicoes">Definições</string>
+
 
     <string-array name="spinner_capacidade">
     <item> Capacidade (L)</item>
