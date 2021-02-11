@@ -3,6 +3,7 @@ package com.example.testinlogin;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
@@ -35,7 +36,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
     private static final int CAMERA_PERM_CODE = 100;
     public static final int CAMERA_REQUEST_CODE = 102;
-    private Button button_auxiliar, open_camera_button, know_more_button;
+    private CardView open_camera_cardView, know_more_cardView;
     private String currentPhotoPath;
     private Uri contentUri;
 
@@ -45,40 +46,29 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
+        open_camera_cardView = findViewById(R.id.cardView_recycling);
+        open_camera_cardView.setOnClickListener(this);
 
-        button_auxiliar=findViewById(R.id.button_auxiliar);
-        button_auxiliar.setOnClickListener(this);
-
-        open_camera_button = findViewById(R.id.button_camera);
-        open_camera_button.setOnClickListener(this);
-
-        know_more_button = findViewById(R.id.button_know_more);
-        know_more_button.setOnClickListener(this);
+        know_more_cardView = findViewById(R.id.cardView_learn_more);
+        know_more_cardView.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.button_auxiliar) {
-            startActivity(new Intent(HomePageActivity.this, HelpToRecycleActivity.class));
+        if (v.getId() == R.id.cardView_recycling) {
+            askPermissions();
         }
-        else {
-            if(v.getId() == R.id.button_camera){
-                askPermissions();
-            }
-        }
-        if(v.getId() == R.id.button_know_more){
-            startActivity(new Intent(HomePageActivity.this, KnowMore.class));
 
+        if (v.getId() == R.id.cardView_learn_more) {
+            startActivity(new Intent(HomePageActivity.this, KnowMore.class));
         }
+
     }
 
     private void askPermissions() {
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-        {
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, CAMERA_PERM_CODE);
-        }
-        else
-        {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERM_CODE);
+        } else {
             dispatchTakePictureIntent();
         }
     }
@@ -88,8 +78,7 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_REQUEST_CODE) {
-            if(resultCode == Activity.RESULT_OK)
-            {
+            if (resultCode == Activity.RESULT_OK) {
                 File f = new File(currentPhotoPath);
                 Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 contentUri = Uri.fromFile(f);
@@ -107,33 +96,29 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
 
     /**
      * Result of permission asked, if request code equals the CAMERA_PERM_CODE, user can take photo
-     * @param requestCode Request code
-     * @param permissions Array of permission
+     *
+     * @param requestCode  Request code
+     * @param permissions  Array of permission
      * @param grantResults Array of grant results
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         //Has permission to access camera
-        if(requestCode == CAMERA_PERM_CODE)
-        {
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            {
+        if (requestCode == CAMERA_PERM_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 dispatchTakePictureIntent();
-            }
-            else
-            {
+            } else {
                 Toast.makeText(this, "É necessário permitir o acesso a câmara!", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
 
-
     private File createImageFile() throws IOException {
         // Create an image file name
         String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_"+userID;
+        String imageFileName = "JPEG_" + timeStamp + "_" + userID;
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
@@ -145,7 +130,6 @@ public class HomePageActivity extends AppCompatActivity implements View.OnClickL
         currentPhotoPath = image.getAbsolutePath();
         return image;
     }
-
 
 
     private void dispatchTakePictureIntent() {
